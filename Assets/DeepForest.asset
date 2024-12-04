@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f58f563836895534dbc4d399a85cf25e, type: 3}
+  m_Name: DeepForest
+  m_EditorClassIdentifier: 
+  backGround: {r: 0.90188676, g: 0.4135065, b: 0.47852087, a: 1}
+  colorDatas:
+  - name: "\u30C6\u30FC\u30EB\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.4156863, b: 0.42352945, a: 1}
+  - name: "\u30AF\u30ED\u30E0\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.3254902, b: 0.24705884, a: 1}
+  - name: "\u30DB\u30FC\u30EA\u30FC\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.41176474, b: 0.28235295, a: 1}
+  - name: "\u30D3\u30EA\u30E4\u30FC\u30C9\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.36078432, b: 0.25882354, a: 1}
+  - name: "\u30A2\u30F3\u30C6\u30A3\u30FC\u30AF\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.32941177, g: 0.5686275, b: 0.49803925, a: 1}
+  - name: "\u30DC\u30C8\u30EB\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.3019608, b: 0.14509805, a: 0}
+  - name: "\u30A8\u30D0\u30FC\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.59607846, b: 0.30980393, a: 0}
+  - name: "\u30A8\u30E1\u30E9\u30EB\u30C9\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.6627451, b: 0.40784317, a: 0}
+  - name: "\u30D5\u30A9\u30EC\u30B9\u30C8\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.15686275, g: 0.54901963, b: 0.40000004, a: 0}
+  - name: "\u30D3\u30EA\u30B8\u30A2\u30F3"
+    color: {r: 0, g: 0.53333336, b: 0.3529412, a: 0}
+  - name: "\u30DB\u30FC\u30EA\u30FC\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.41176474, b: 0.28235295, a: 0}
+  - name: "\u30B5\u30DE\u30FC\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.6, b: 0.26666668, a: 0}
+  - name: "\u30B9\u30DA\u30A2\u30DF\u30F3\u30C8"
+    color: {r: 0.47450984, g: 0.75294125, b: 0.43137258, a: 0}
+  - name: "\u30AB\u30AF\u30BF\u30B9"
+    color: {r: 0.21960786, g: 0.4901961, b: 0.22352943, a: 0}
+  - name: "\u30B9\u30D4\u30CA\u30C3\u30C1\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.25490198, g: 0.43921572, b: 0.21960786, a: 0}
+  - name: "\u30A2\u30A4\u30D3\u30FC\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.34117648, g: 0.5411765, b: 0.2392157, a: 0}
+  - name: "\u30A2\u30C3\u30D7\u30EB\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.654902, g: 0.8235295, b: 0.5529412, a: 0}
+  - name: "\u30E1\u30C9\u30A6\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.39607847, g: 0.67058825, b: 0.19215688, a: 0}
+  - name: "\u30B7\u30C8\u30ED\u30F3\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.3803922, g: 0.5568628, b: 0.20392159, a: 0}
+  - name: "\u30EA\u30FC\u30D5\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.62352943, g: 0.7607844, b: 0.3019608, a: 0}
+  - name: "\u30B9\u30D7\u30EA\u30F3\u30B0\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.6117647, g: 0.73333335, b: 0.10980393, a: 0}
+  - name: "\u30B0\u30E9\u30B9\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.4666667, g: 0.49411768, b: 0.25490198, a: 0}
+  - name: "\u30AA\u30EA\u30FC\u30D6\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0.37254903, g: 0.39607847, b: 0.15294118, a: 0}
+  - name: "\u30BF\u30FC\u30B3\u30A4\u30BA\u30B0\u30EA\u30FC\u30F3"
+    color: {r: 0, g: 0.5803922, b: 0.4784314, a: 0}
+  - name: "\u840C\u8471\u8272"
+    color: {r: 0, g: 0.43137258, b: 0.32941177, a: 0}
+  - name: "\u5343\u6B73\u7DD1"
+    color: {r: 0.19215688, g: 0.4039216, b: 0.27058825, a: 0}
+  - name: "\u5E38\u78D0\u8272"
+    color: {r: 0, g: 0.48235297, b: 0.2627451, a: 0}
+  - name: "\u6DF1\u7DD1"
+    color: {r: 0, g: 0.33333334, b: 0.18039216, a: 0}
+  - name: "\u9244\u8272"
+    color: {r: 0, g: 0.32156864, b: 0.2627451, a: 0}
+  - name: "\u9DB8\u840C\u9EC4"
+    color: {r: 0.50980395, g: 0.68235296, b: 0.27450982, a: 0}
