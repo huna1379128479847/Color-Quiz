@@ -7,16 +7,16 @@ namespace ColorQuiz
 {
     public class ColorPallet : MonoBehaviour, IPointerClickHandler
     {
-       public  Image image;
+        public Image image;
         private AudioSource _audioSource;
-        
+
         private ColorData _colorData;
         // Start is called before the first frame update
         private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
             image = GetComponent<Image>();
-            if (gameObject.name == "Ans") 
+            if (gameObject.name == "Ans")
                 return;
             Director.instance.colorPallets.Add(this);
         }
@@ -28,10 +28,11 @@ namespace ColorQuiz
 
             //Debug.LogError("error");
         }
-        public void SetColor(ColorData changeColer)
+        /// <returns>Color in ColorData or dafault.</returns>
+        public Color SetColor(ColorData changeColer)
         {
             if (changeColer == _colorData)
-                return;
+                return default;
             if (changeColer.color == null || image == null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -45,10 +46,11 @@ namespace ColorQuiz
                     sb.AppendLine(":イメージがアタッチされていません。");
                 }
                 Debug.LogError(sb.ToString());
-                return;
+                return default;
             }
             image.color = changeColer.color;
             _colorData = changeColer;
+            return changeColer.color;
         }
         public ColorData GetColor()
         {

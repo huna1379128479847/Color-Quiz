@@ -9,7 +9,6 @@ namespace ColorQuiz
         private List<ColorPallet> _colorPallets = new List<ColorPallet>();
         private Camera _camera;
         private ColorPallet _ansShowPallet;
-
         public ColorSetter(Camera camera, List<ColorPallet> colorPallets, ColorPallet ansShowPallet)
         {
             _camera = camera;
@@ -27,10 +26,7 @@ namespace ColorQuiz
                 colorPallet.SetColor(a);
             });
             // 1～9番目の色からランダムに1つ選んで答え表示用のパレットに設定
-            var t = CollectionsHelper.RandomPick(_colorPallets).GetColor();
-            _ansShowPallet.SetColor(t);
-            Debug.Log(ColorUtility.ToHtmlStringRGB(t.color));
-            return t.color;
+            return _ansShowPallet.SetColor(CollectionsHelper.RandomPick(_colorPallets).GetColor());
         }
     }
 }
