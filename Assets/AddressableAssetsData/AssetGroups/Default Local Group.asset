@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 78e33f32ccda0704f8d6fb49b3084391
+  m_SerializeEntries:
+  - m_GUID: 0a1b50f7fb3faad4bb30072364a50115
+    m_Address: "Pic/\u30A4\u30E9\u30B9\u30C8"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Picture
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0fb3791f6d68dba42821a94360fbc24d
+    m_Address: Pic/okumonof_fantasy824-1536x864
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Picture
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d03ba3a11d8efd46ad4b1f5566ad900
+    m_Address: Pic/shild
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Picture
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3492e5420ab0d9c4e957a236418730fa
+    m_Address: Color
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7942ca990a1ea5b48aaf2726c5b749bd
+    m_Address: score
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a09a35ada1ccc794f99c98cfbf9fb596
+    m_Address: Pic/press!!
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Picture
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7197fff8d372c24a8b12c28cb485ffb
+    m_Address: "Pic/nc154984_\u30DE\u30B9\u30AD\u30F3\u30B0\u30C6\u30FC\u30D7\u306E\u30D5\u30EC\u30FC\u30E0\u301016_9\u30111"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Picture
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf11c433dc19d1a49a7666a98d778e85
+    m_Address: SFX_UI_Click_Organic_Wooden_Select_1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SFX
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: ab148ee817264af409852c925b93ced4, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4da2aad934429b4429f440f302712ea0, type: 2}
+    - {fileID: 11400000, guid: 19b5d9fdb1f6a7744a1e3719e7247953, type: 2}
