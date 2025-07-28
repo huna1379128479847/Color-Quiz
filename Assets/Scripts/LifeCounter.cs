@@ -46,7 +46,7 @@ namespace ColorQuiz
         {
             _damage.Play();
             lifeDamage++;
-            Director.instance.ResetButton();
+            Director.instance.ResetColors();
             if (IsGameOver())
             {
                 GameOver();

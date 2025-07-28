@@ -34,28 +34,12 @@ namespace ColorQuiz
         public string CurrentColorName => _colors[GetClampedDropdownIndex()].name;
         private int GetClampedDropdownIndex() => Mathf.Clamp(_dropdown.value, 0, _colors.Count);
 
-        private void RegisterEventListeners()
-        {
-            _paretReset.onClick.AddListener(ResetButton);
-            _resetButton.onClick.AddListener(GameReset);
-            _dropdown.onValueChanged.AsObservable().Subscribe(_ =>
-            {
-                _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
-            }).AddTo(this);
-            _exitButton.onClick.AsObservable().Subscribe(_ =>
-            {
-                var highScore = _statsManager.SortHighScore();
-                var unused = ApplicationDirector.Quit(highScore);
-            }).AddTo(this);
-        }
-
-        public void ResetButton()
+        public void ResetColors()
         {
             StatsWatcher.IncrementResetCount();
             _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
             _statsManager.CurrentScore--;
         }
-
 
         public void ClickTiles(ColorData data, bool isCollect)
         {
@@ -76,27 +60,40 @@ namespace ColorQuiz
             StatsWatcher.RecordClick();
         }
 
-        public void GameReset()
-        {
-            StatsWatcher.ResetClick();
-            StatsWatcher.RecordGamePlayed();
-
-            _statsManager.SetHighScore();
-            resetGame.Play();
-            _dropdown.value = 0;
-            _statsManager.ResetScore();
-            LifeCounter.instance.ResetGame();
-
-            _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
-        }
-
         private async UniTask InitializeAsync()
         {
-            Debug.Log("Director InitializeAsync Start");
             await SaveDataLoader.Invoke();
-            Debug.Log("Director InitializeAsync End");
-            RegisterEventListeners();
             _statsManager = GetComponent<StatsManager>();
+            _paretReset.onClick.AsObservable().Subscribe(_ => ResetColors()).AddTo(this);
+
+            _resetButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                // ゲームをリセット
+                StatsWatcher.ResetClick();
+                StatsWatcher.RecordGamePlayed();
+
+                _statsManager.SetHighScore();
+                resetGame.Play();
+                _dropdown.value = 0;
+                _statsManager.ResetScore();
+                LifeCounter.instance.ResetGame();
+
+                _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
+            }).AddTo(this);
+
+            _dropdown.onValueChanged.AsObservable().Subscribe(_ =>
+            {
+                // ハイスコアを更新し、色を変更する
+                _statsManager.SetHighScore();
+                _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
+            }).AddTo(this);
+
+            _exitButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                // ゲームを終了
+                var highScore = _statsManager.SortHighScore();
+                var unused = ApplicationDirector.Quit(highScore);
+            }).AddTo(this);
             _colorSetter = new ColorSetter(Camera.main, colorPallets, _ansColorParet);
             _colorSetter.SetColor(_colors[0]);
         }
