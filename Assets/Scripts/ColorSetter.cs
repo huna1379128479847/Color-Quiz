@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using HighElixir.Utilities;
+using HighElixir;
 
 namespace ColorQuiz
 {
@@ -21,13 +21,13 @@ namespace ColorQuiz
             HashSet<ColorData> usedIndices = new HashSet<ColorData>(); // 色の重複排除
             _colorPallets.ForEach(colorPallet => 
             {
-                var a = CollectionsHelper.RandomPick(color.colorDatas, usedIndices);
+                var a = color.colorDatas.RandomPick(usedIndices);
                 Debug.Log($"Set color: {a.name} to {colorPallet.name}");
                 usedIndices.Add(a);
                 colorPallet.SetColor(a);
             });
             // 1～9番目の色からランダムに1つ選んで答え表示用のパレットに設定
-            ColorPallet.answer = _ansShowPallet.SetColor(CollectionsHelper.RandomPick(_colorPallets).GetColor());
+            ColorPallet.answer = _ansShowPallet.SetColor(_colorPallets.RandomPick().GetColor());
         }
     }
 }

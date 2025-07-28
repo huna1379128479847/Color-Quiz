@@ -27,7 +27,7 @@ namespace ColorQuiz
             _onTask = true;
             _image.gameObject.SetActive(true);
             List<Transform> transforms = new List<Transform>(Director.instance.colorPallets.ConvertAll(p => p.transform));
-            LoopableInt idx = new(0, transforms.Count, 0);
+            LoopableInt idx = new(0, transforms.Count - 1, 0);
 
             // 1秒ごとに次のパレットへ移動
             while (ShouldBeExpose)
@@ -50,7 +50,8 @@ namespace ColorQuiz
                 .AddTo(this);
             this.UpdateAsObservable()
                 .Where(_ => ShouldBeExpose && !_onTask)
-                .Subscribe(unused => {
+                .Subscribe(unused =>
+                {
                     _ = ImageToParetTransform();
                 })
                 .AddTo(this);

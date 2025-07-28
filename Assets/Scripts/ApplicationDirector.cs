@@ -6,7 +6,7 @@ namespace ColorQuiz
 {
     public static class ApplicationDirector
     {
-        public static async UniTask Quit(HighScore highScore)
+        public static async UniTask Quit(HighScores highScore)
         {
             Debug.Log("ゲームを終了します");
             await SaveDataLoader.SaveDataAsync(StatsWatcher.CreateSaveData(), highScore);

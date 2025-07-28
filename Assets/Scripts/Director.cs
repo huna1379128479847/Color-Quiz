@@ -1,6 +1,6 @@
 ﻿using ColorQuiz.SaveData;
 using Cysharp.Threading.Tasks;
-using HighElixir.Utilities;
+using HighElixir;
 using System.Collections.Generic;
 using TMPro;
 using UniRx;
@@ -31,6 +31,7 @@ namespace ColorQuiz
         private ColorSetter _colorSetter;
         private StatsManager _statsManager;
 
+        public string CurrentColorName => _colors[GetClampedDropdownIndex()].name;
         private int GetClampedDropdownIndex() => Mathf.Clamp(_dropdown.value, 0, _colors.Count);
 
         private void RegisterEventListeners()
@@ -43,13 +44,7 @@ namespace ColorQuiz
             }).AddTo(this);
             _exitButton.onClick.AsObservable().Subscribe(_ =>
             {
-                _statsManager.SortScoreList();
-                HighScore highScore = new HighScore()
-                {
-                    First = _statsManager.highScore[0],
-                    Second = _statsManager.highScore[1],
-                    Third = _statsManager.highScore[2]
-                };
+                var highScore = _statsManager.SortHighScore();
                 var unused = ApplicationDirector.Quit(highScore);
             }).AddTo(this);
         }
@@ -58,7 +53,7 @@ namespace ColorQuiz
         {
             StatsWatcher.IncrementResetCount();
             _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
-            _statsManager.AddScore(-1);
+            _statsManager.CurrentScore--;
         }
 
 
@@ -69,7 +64,7 @@ namespace ColorQuiz
             {
                 //Debug.Log("correct");
                 _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
-                _statsManager.AddScore(1);
+                _statsManager.CurrentScore++;
                 LifeCounter.instance.ResetShild();
                 StatsWatcher.RecordCorrectAnswer();
             }

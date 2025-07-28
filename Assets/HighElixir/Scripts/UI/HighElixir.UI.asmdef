@@ -1,0 +1,18 @@
+{
+    "name": "HighElixir.UI",
+    "rootNamespace": "HighElixir.UI",
+    "references": [
+        "GUID:f857ed5e6d0195a48936edaa442d1bba",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:025b0509f66826e479c2bd7d9487c259"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

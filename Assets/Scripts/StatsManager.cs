@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using ColorQuiz.SaveData;
+using System.Linq;
 
 namespace ColorQuiz
 {
@@ -10,76 +11,78 @@ namespace ColorQuiz
         [SerializeField] TMP_Text _currentScoreObject;
         [SerializeField] TMP_Text _ColorNameObject;
         [SerializeField] List<TMP_Text> scores;
-        public List<int> highScore = new List<int>();
+        public HighScores highScore = new();
         private int _currentScore = 0;
-        private void Start()
+        public HighScore Current
         {
-            highScore.Add(0);
-            highScore.Add(0);
-            highScore.Add(0);
-            SortScoreList();
+            get
+            {
+                var existingHighScore = highScore.Scores.FirstOrDefault(item => item.ColorName == Director.instance.CurrentColorName);
+                if (existingHighScore != null)
+                {
+                    return existingHighScore;
+                }
+                else
+                {
+                    var newHighScore = new HighScore { ColorName = Director.instance.CurrentColorName };
+                    highScore.Scores.Add(newHighScore);
+                    return newHighScore;
+                }
+            }
+        }
+
+        public int CurrentScore
+        {
+            get => _currentScore;
+            set
+            {
+                _currentScore = Mathf.Max(value, 0);
+                UpdateUI();
+            }
+        }
+        public void SetHighScore(HighScores highScore)
+        {
+            this.highScore = highScore;
+            SortHighScore();
+            UpdateUI();
+        }
+        public void SetHighScore()
+        {
+            StatsWatcher.UpdateHighScore(_currentScore);
+            SortHighScore();
+            UpdateUI();
+        }
+        public HighScores SortHighScore()
+        {
+            var tmp = Current.ToList();
+            tmp.Add(_currentScore);
+            tmp.Sort((a, b) => b - a);
+            if (tmp.Count > 3)
+            {
+                tmp.RemoveAt(tmp.Count - 1);
+            }
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                Current[i] = tmp[i];
+            }
+            return highScore;
+        }
+
+        public void ResetScore()
+        {
+            _currentScore = 0;
+            UpdateUI();
+        }
+        public void UpdateUI()
+        {
+            _currentScoreObject.SetText($"Score : {_currentScore.ToString("D3")}");
+            UpdateHighScoreDisplay();
         }
 
         private void UpdateHighScoreDisplay()
         {
             for (int n = 0; n < scores.Count; n++)
-            {
-                if (n >= highScore.Count)
-                {
-                    scores[n].SetText($"{n + 1}st : 000");
-                }
-                else
-                {
-                    scores[n].SetText($"{n + 1}st : {highScore[n]:D3}");
-                }
-            }
-        }
-
-        public void SetHighScore(HighScore highScore)
-        {
-            this.highScore.Add(highScore.First);
-            this.highScore.Add(highScore.Second);
-            this.highScore.Add(highScore.Third);
-            SortScoreList();
-        }
-        public void SetHighScore()
-        {
-            StatsWatcher.UpdateHighScore(_currentScore);
-            highScore.Add(_currentScore);
-            SortScoreList();
-        }
-        public void SortScoreList()
-        {
-            highScore.Sort((a, b) => b - a);
-            if (highScore.Count > 3)
-            {
-                highScore.RemoveAt(highScore.Count - 1);
-            }
-            UpdateHighScoreDisplay();
-        }
-        public void SetScore()
-        {
-            _currentScoreObject.SetText($"Score : {_currentScore.ToString("D3")}");
-        }
-        public void SetColorName(string colorName)
-        {
-            _ColorNameObject.SetText(colorName);
-        }
-
-        public void AddScore(int score)
-        {
-            _currentScore = Mathf.Max(_currentScore + score, 0);
-            SetScore();
-        }
-        public void SetScore(int score)
-        {
-            _currentScore = score;
-            SetScore();
-        }
-        public void ResetScore()
-        {
-            _currentScore = 0;
-            SetScore();
+                scores[n].SetText($"{n + 1}st : {Current[n]:D3}");
         }
     }
 }

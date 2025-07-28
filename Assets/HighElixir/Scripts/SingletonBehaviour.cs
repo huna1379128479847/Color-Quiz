@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace HighElixir.Utilities
+namespace HighElixir
 {
     public abstract class SingletonBehavior<T> : MonoBehaviour where T : MonoBehaviour
     {
@@ -26,7 +26,10 @@ namespace HighElixir.Utilities
         {
             CheckInstance();
         }
-
+        virtual protected void OnEnable()
+        {
+            CheckInstance();
+        }
         virtual protected void OnDestroy() { if (instance == this) { _instance = null; } }
 
         protected bool CheckInstance()
@@ -40,7 +43,7 @@ namespace HighElixir.Utilities
             {
                 return true;
             }
-            Destroy(this);
+            Destroy(gameObject);
             return false;
         }
     }

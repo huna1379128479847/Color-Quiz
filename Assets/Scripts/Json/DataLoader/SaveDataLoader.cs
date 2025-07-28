@@ -102,7 +102,7 @@ namespace ColorQuiz.SaveData
                 try
                 {
                     string jsonContent = await File.ReadAllTextAsync(filePath);
-                    HighScore saveData = JsonUtility.FromJson<HighScore>(jsonContent);
+                    HighScores saveData = JsonUtility.FromJson<HighScores>(jsonContent);
                     foreach (var go in SceneManager.GetActiveScene().GetRootGameObjects())
                     {
                         if (go.TryGetComponent<StatsManager>(out var statsManager))
@@ -121,7 +121,7 @@ namespace ColorQuiz.SaveData
             IsFinishedLoadSaveData = true;
         }
 
-        public static async UniTask SaveDataAsync(SaveData data, HighScore highScore)
+        public static async UniTask SaveDataAsync(SaveData data, HighScores highScore)
         {
             string directoryPath = $"{absolutePathPrefix}/{jsonPath}";
             string filePath = $"{directoryPath}/saveData.json";
