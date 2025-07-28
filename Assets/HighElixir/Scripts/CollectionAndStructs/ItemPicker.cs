@@ -5,9 +5,9 @@ using System;
 namespace HighElixir
 {
     /// <summary>
-    /// ゲーム内で使う汎用的なヘルパーメソッドをまとめたクラス。
+    /// リスト操作、要素の取得に関するヘルパークラス。
     /// </summary>
-    public static class RandomPicker
+    public static class ItemPicker
     {
         private static Random random = new Random();
         /// <summary>
@@ -29,6 +29,28 @@ namespace HighElixir
             // もし未使用の要素がない場合は、デフォルト値を返す。
             if (v.Count == 0) return default;
             return RandomPick(v);
+        }
+
+        /// <summary>
+        /// 特定の大きさを超過したアイテムをすべて返す.
+        /// </summary>
+        /// <param name="allowSize">許可されるリストの大きさ</param>
+        /// <param name="res"><ass cref="allowSize">allowSize</cref>を超過したアイテム</param>
+        /// <returns>超過していたかどうか</returns>
+        public static bool TryGetOverItem<T>(this List<T> list, int allowSize, out List<T> res)
+        {
+            res = new List<T>();
+            var temp = list.Count - allowSize;
+            if (temp > 0)
+            {
+                var index = list.Count - 1;
+                for (int i = 0; i < temp; i++)
+                {
+                    res.Add(list[index - i]);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }
