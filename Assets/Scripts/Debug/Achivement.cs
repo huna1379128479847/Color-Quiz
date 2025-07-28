@@ -1,4 +1,4 @@
-using ColorQuiz.Achieves;
+ï»¿using ColorQuiz.Achieves;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using ColorQuiz.SaveData;
+using Cysharp.Threading.Tasks;
 
 namespace ColorQuiz.Debugs
 {
@@ -19,69 +20,8 @@ namespace ColorQuiz.Debugs
         [SerializeField] private List<string> _achievementTitles = new List<string>();
         [SerializeField] private Achievements _achievements;
         private Achieves.Achievement _achievement;
-        private SaveDataLoader _saveDataLoader;
-        private bool finishedInit = false;
 
-        private void Awake()
-        {
-            _saveDataLoader = GetComponent<SaveDataLoader>();
-            _achievements = new Achievements()
-            {
-                achivements = new List<Achieves.Achievement>()
-            };
-            _achievement = new Achieves.Achievement();
 
-            // Confirmƒ{ƒ^ƒ“‚ÉƒŠƒXƒi[‚ğ’Ç‰Á
-            if (_confirm != null)
-            {
-                _confirm.onClick.AddListener(Confirm);
-                TMP_Text confirmText = _confirm.GetComponentInChildren<TMP_Text>();
-                if (confirmText != null) confirmText.SetText("Confirm");
-            }
-
-            // Cancelƒ{ƒ^ƒ“‚ÉƒŠƒXƒi[‚ğ’Ç‰Á
-            if (_cancel != null)
-            {
-                _cancel.onClick.AddListener(Cancel);
-                TMP_Text cancelText = _cancel.GetComponentInChildren<TMP_Text>();
-                if (cancelText != null) cancelText.SetText("Cancel");
-            }
-
-            // Exitƒ{ƒ^ƒ“‚ÉƒŠƒXƒi[‚ğ’Ç‰Á
-            if (_exit != null)
-            {
-                _exit.onClick.AddListener(Exit);
-                TMP_Text exitText = _exit.GetComponentInChildren<TMP_Text>();
-                if (exitText != null) exitText.SetText("Exit");
-            }
-
-            // Še“ü—ÍƒtƒB[ƒ‹ƒh‚Éƒ^ƒCƒgƒ‹‚ğİ’è
-            for (int i = 0; i < _inputFields.Count; i++)
-            {
-                if (i >= _achievementTitles.Count) { break; }
-                TMP_Text titleText = _inputFields[i].GetComponentInChildren<TMP_Text>();
-                if (titleText != null)
-                {
-                    titleText.SetText(_achievementTitles[i]);
-                }
-                else
-                {
-                    Debug.LogWarning($"Warning: No TMP_Text component found in input field at index {i}");
-                }
-            }
-        }
-        private void Update()
-        {
-            if (_saveDataLoader.CanGameStart() && !finishedInit)
-            {
-                _achievements = _saveDataLoader.Achievements;
-                finishedInit = true;
-                if (_achievements == null)
-                {
-                    _achievements = new Achievements();
-                }
-            }
-        }
         public void Exit()
         {
             SaveDataAsync();
@@ -91,7 +31,7 @@ namespace ColorQuiz.Debugs
         {
             string directoryPath = $"{Application.persistentDataPath}/Achievements";
             string filePath = $"{directoryPath}/achievements.json";
-            // ƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚µ‚È‚¢ê‡‚Íì¬
+            // ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã—ãªã„å ´åˆã¯ä½œæˆ
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
@@ -129,7 +69,7 @@ namespace ColorQuiz.Debugs
                 TMP_Text label = field.GetComponentInChildren<TMP_Text>();
                 if (label == null) continue;
 
-                // “ü—ÍƒtƒB[ƒ‹ƒh‚Ìƒ^ƒCƒgƒ‹‚ÉŠî‚Ã‚¢‚Ä“KØ‚ÈƒvƒƒpƒeƒB‚Éİ’è
+                // å…¥åŠ›ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚¿ã‚¤ãƒˆãƒ«ã«åŸºã¥ã„ã¦é©åˆ‡ãªãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«è¨­å®š
                 switch (label.text)
                 {
                     case "UniqueName":
@@ -173,10 +113,67 @@ namespace ColorQuiz.Debugs
 
             }
             Debug.Log(sb.ToString());
-            // ÀÑƒŠƒXƒg‚É’Ç‰Á
+            // å®Ÿç¸¾ãƒªã‚¹ãƒˆã«è¿½åŠ 
             _achievements.achivements.Add(_achievement);
             _achievement = new Achieves.Achievement();
             Debug.Log("Achievement added successfully.");
+        }
+        private async void Awake()
+        {
+            _achievements = new Achievements()
+            {
+                achivements = new List<Achieves.Achievement>()
+            };
+            _achievement = new Achieves.Achievement();
+
+            // Confirmãƒœã‚¿ãƒ³ã«ãƒªã‚¹ãƒŠãƒ¼ã‚’è¿½åŠ 
+            if (_confirm != null)
+            {
+                _confirm.onClick.AddListener(Confirm);
+                TMP_Text confirmText = _confirm.GetComponentInChildren<TMP_Text>();
+                if (confirmText != null) confirmText.SetText("Confirm");
+            }
+
+            // Cancelãƒœã‚¿ãƒ³ã«ãƒªã‚¹ãƒŠãƒ¼ã‚’è¿½åŠ 
+            if (_cancel != null)
+            {
+                _cancel.onClick.AddListener(Cancel);
+                TMP_Text cancelText = _cancel.GetComponentInChildren<TMP_Text>();
+                if (cancelText != null) cancelText.SetText("Cancel");
+            }
+
+            // Exitãƒœã‚¿ãƒ³ã«ãƒªã‚¹ãƒŠãƒ¼ã‚’è¿½åŠ 
+            if (_exit != null)
+            {
+                _exit.onClick.AddListener(Exit);
+                TMP_Text exitText = _exit.GetComponentInChildren<TMP_Text>();
+                if (exitText != null) exitText.SetText("Exit");
+            }
+
+            // å„å…¥åŠ›ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã«ã‚¿ã‚¤ãƒˆãƒ«ã‚’è¨­å®š
+            for (int i = 0; i < _inputFields.Count; i++)
+            {
+                if (i >= _achievementTitles.Count) { break; }
+                TMP_Text titleText = _inputFields[i].GetComponentInChildren<TMP_Text>();
+                if (titleText != null)
+                {
+                    titleText.SetText(_achievementTitles[i]);
+                }
+                else
+                {
+                    Debug.LogWarning($"Warning: No TMP_Text component found in input field at index {i}");
+                }
+            }
+            await UniTask.WaitUntil(() => SaveDataLoader.CanGameStart());
+            _achievements = SaveDataLoader.Achievements;
+            if (_achievements == null)
+            {
+                _achievements = new Achievements();
+            }
+
+        }
+        private void Update()
+        {
         }
     }
 }

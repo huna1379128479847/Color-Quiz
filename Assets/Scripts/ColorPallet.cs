@@ -1,60 +1,65 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Text;
 
 namespace ColorQuiz
 {
+    [DefaultExecutionOrder(-1)]
     public class ColorPallet : MonoBehaviour, IPointerClickHandler
     {
+        public static Color answer;
         public Image image;
         private AudioSource _audioSource;
 
-        private ColorData _colorData;
-        // Start is called before the first frame update
-        private void Awake()
-        {
-            _audioSource = GetComponent<AudioSource>();
-            image = GetComponent<Image>();
-            if (gameObject.name == "Ans")
-                return;
-            Director.instance.colorPallets.Add(this);
-        }
+        [SerializeField] private ColorData _colorData;
         public void OnPointerClick(PointerEventData pointerData)
         {
             _audioSource?.Play();
-            Debug.Log($"{Time.time} This color is {ColorUtility.ToHtmlStringRGB(_colorData.color)}.");
-            Director.instance.ClickTiles(this);
+
+            if (LifeCounter.instance.IsGameOver()) { return; }
+            if (gameObject.name == "Ans") { return; }
+            Director.instance.ClickTiles(_colorData, answer == _colorData.color);
 
             //Debug.LogError("error");
         }
         /// <returns>Color in ColorData or dafault.</returns>
         public Color SetColor(ColorData changeColer)
         {
-            if (changeColer == _colorData)
-                return default;
             if (changeColer.color == null || image == null)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(name + "Ç≈ÉGÉâÅ[î≠ê∂");
+                sb.Append(name);
                 if (changeColer.color == null)
                 {
-                    sb.AppendLine(":ÉJÉâÅ[Ç™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅB");
+                    sb.AppendLine(":„Ç´„É©„Éº„ÅåË®≠ÂÆö„Åï„Çå„Å¶„ÅÑ„Åæ„Åõ„Çì„ÄÇ");
                 }
                 if (image == null)
                 {
-                    sb.AppendLine(":ÉCÉÅÅ[ÉWÇ™ÉAÉ^ÉbÉ`Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅB");
+                    sb.AppendLine(":„Ç§„É°„Éº„Ç∏„Åå„Ç¢„Çø„ÉÉ„ÉÅ„Åï„Çå„Å¶„ÅÑ„Åæ„Åõ„Çì„ÄÇ");
                 }
                 Debug.LogError(sb.ToString());
                 return default;
             }
-            image.color = changeColer.color;
+            if (changeColer == _colorData)
+                return changeColer.color;
             _colorData = changeColer;
-            return changeColer.color;
+            if (_colorData.color.a < 1f)
+            {
+                _colorData.color.a = 1f; // Ensure the alpha is set to fully opaque
+            }
+            image.color = _colorData.color;
+            return _colorData.color;
         }
         public ColorData GetColor()
         {
             return _colorData;
+        }
+
+        private void Awake()
+        {
+            _audioSource = GetComponent<AudioSource>();
+            image = GetComponent<Image>();
         }
     }
 }

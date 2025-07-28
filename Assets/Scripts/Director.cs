@@ -1,97 +1,74 @@
+Ôªøusing ColorQuiz.SaveData;
+using Cysharp.Threading.Tasks;
+using HighElixir.Utilities;
 using System.Collections.Generic;
+using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using UnityEditor;
-using ColorQuiz.SaveData;
-using HighElixir.Utilities;
 
 namespace ColorQuiz
 {
     [DefaultExecutionOrder(1)]
     public class Director : SingletonBehavior<Director>
     {
-        [Header("âπåπ")]
+        [Header("Èü≥Ê∫ê")]
         [SerializeField] private AudioSource resetGame;
-        
 
-        [Header("ÉJÉâÅ[ÉpÉåÉbÉgÉIÉuÉWÉFÉNÉg")]
+
+        [Header("„Ç´„É©„Éº„Éë„É¨„ÉÉ„Éà„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà")]
         [SerializeField] private List<ColorDataBase> _colors = new List<ColorDataBase>();
         [SerializeField] private TMP_Dropdown _dropdown;
         [SerializeField] private ColorPallet _ansColorParet;
 
-        [Header("UIÉ{É^Éì")]
+        [Header("UI„Éú„Çø„É≥")]
         [SerializeField] private Button _resetButton;
         [SerializeField] private Button _paretReset;
         [SerializeField] private Button _exitButton;
-        [SerializeField] private TMP_Text _tMP_Text;
+        [SerializeField] private TMP_Text _colorName;
 
-        private Color _ansColor = Color.blue;
         public List<ColorPallet> colorPallets = new List<ColorPallet>();
         private ColorSetter _colorSetter;
         private StatsManager _statsManager;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            ColorAlphatoOne();
-            RegisterEventListeners();
-            _statsManager = GetComponent<StatsManager>();
-            _colorSetter = new ColorSetter(Camera.main, colorPallets, _ansColorParet);
-            SetColor(_colors[0]);
-        }
-        protected void Update()
-        {
-            StatsWatcher.AddPlayTime(Time.deltaTime);
-        }
         private int GetClampedDropdownIndex() => Mathf.Clamp(_dropdown.value, 0, _colors.Count);
 
-        private void ColorAlphatoOne()
-        {
-            foreach (var color in _colors)
-            {
-                foreach (var data in color.colorDatas)
-                {
-                    data.color.a = 1f;
-                }
-            }
-        }
         private void RegisterEventListeners()
         {
             _paretReset.onClick.AddListener(ResetButton);
             _resetButton.onClick.AddListener(GameReset);
-            _dropdown.onValueChanged.AddListener(OnValueChanged);
-            _exitButton.onClick.AddListener(End);
-        }
-
-        public void SetColor(ColorDataBase color)
-        {
-            _ansColor = _colorSetter.SetColor(color);
+            _dropdown.onValueChanged.AsObservable().Subscribe(_ =>
+            {
+                _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
+            }).AddTo(this);
+            _exitButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                _statsManager.SortScoreList();
+                HighScore highScore = new HighScore()
+                {
+                    First = _statsManager.highScore[0],
+                    Second = _statsManager.highScore[1],
+                    Third = _statsManager.highScore[2]
+                };
+                var unused = ApplicationDirector.Quit(highScore);
+            }).AddTo(this);
         }
 
         public void ResetButton()
         {
             StatsWatcher.IncrementResetCount();
-
-            SetColor(_colors[GetClampedDropdownIndex()]);
+            _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
             _statsManager.AddScore(-1);
         }
 
-        public void OnValueChanged(int _)
-        {
-            SetColor(_colors[GetClampedDropdownIndex()]);
-        }
 
-        public void ClickTiles(ColorPallet colorPallet)
+        public void ClickTiles(ColorData data, bool isCollect)
         {
-            if (LifeCounter.instance.IsGameOver()) { return; }
-            if (colorPallet.gameObject.name == "Ans") { return; }
-            var c = colorPallet.GetColor();
-            _tMP_Text.SetText(colorPallet.GetColor().name);
-            if (c.color == _ansColor)
+            _colorName.SetText(data.name);
+            if (isCollect)
             {
                 //Debug.Log("correct");
-                SetColor(_colors[GetClampedDropdownIndex()]);
+                _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
                 _statsManager.AddScore(1);
                 LifeCounter.instance.ResetShild();
                 StatsWatcher.RecordCorrectAnswer();
@@ -115,28 +92,27 @@ namespace ColorQuiz
             _statsManager.ResetScore();
             LifeCounter.instance.ResetGame();
 
-            SetColor(_colors[GetClampedDropdownIndex()]);
+            _colorSetter.SetColor(_colors[GetClampedDropdownIndex()]);
         }
 
-        private async void End()
+        private async UniTask InitializeAsync()
         {
-            Debug.Log("ÉQÅ[ÉÄÇèIóπÇµÇ‹Ç∑");
-            _statsManager.SortScoreList();
-            HighScore highScore = new HighScore()
-            {
-                First = _statsManager.highScore[0],
-                Second = _statsManager.highScore[1],
-                Third = _statsManager.highScore[2]
-            };
-            await GetComponent<SaveDataLoader>().SaveDataAsync(StatsWatcher.CreateSaveData(), highScore);
-            // ÉQÅ[ÉÄÇèIóπÇ≥ÇπÇÈã@î\
-#if UNITY_EDITOR
-            EditorApplication.isPlaying = false; //ÉQÅ[ÉÄÉvÉåÉCèIóπ
-#else
-                Application.Quit(); //ÉQÅ[ÉÄÉvÉåÉCèIóπ
-#endif
+            Debug.Log("Director InitializeAsync Start");
+            await SaveDataLoader.Invoke();
+            Debug.Log("Director InitializeAsync End");
+            RegisterEventListeners();
+            _statsManager = GetComponent<StatsManager>();
+            _colorSetter = new ColorSetter(Camera.main, colorPallets, _ansColorParet);
+            _colorSetter.SetColor(_colors[0]);
         }
-
-        
+        protected override void Awake()
+        {
+            base.Awake();
+            _ = InitializeAsync();
+        }
+        protected void FixedUpdate()
+        {
+            StatsWatcher.AddPlayTime(Time.fixedDeltaTime);
+        }
     }
 }

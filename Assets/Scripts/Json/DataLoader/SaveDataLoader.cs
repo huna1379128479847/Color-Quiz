@@ -1,29 +1,30 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
 using ColorQuiz.Achieves;
+using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
 
 namespace ColorQuiz.SaveData
 {
-    public class SaveDataLoader : MonoBehaviour
+    public static class SaveDataLoader
     {
-        private string absolutePathPrefix;
-        private readonly string jsonPath = "SaveData";
-        private readonly string achievementsPath = "Achievements";
+        private static string absolutePathPrefix;
+        private static readonly string jsonPath = "SaveData";
+        private static readonly string achievementsPath = "Achievements";
 
-        public bool IsFinishedLoadAchievementData { get; private set; } = false;
-        public bool IsFinishedLoadSaveData { get; private set; } = false;
+        public static bool IsFinishedLoadAchievementData { get; private set; } = false;
+        public static bool IsFinishedLoadSaveData { get; private set; } = false;
 
-        public Achievements Achievements { get; private set; }
-        public bool CanGameStart() => IsFinishedLoadAchievementData && IsFinishedLoadSaveData;
+        public static Achievements Achievements { get; private set; }
+        public static bool CanGameStart() => IsFinishedLoadAchievementData && IsFinishedLoadSaveData;
 
-        public async Task LoadData()
+        public static async UniTask LoadData()
         {
-            await Task.WhenAll(LoadAchievementData(), LoadSaveData(), LoadScoreData());
+            await UniTask.WhenAll(LoadAchievementData(), LoadSaveData(), LoadScoreData());
         }
 
-        private async Task LoadAchievementData()
+        private static async UniTask LoadAchievementData()
         {
             string directoryPath = $"{absolutePathPrefix}/{achievementsPath}";
             string filePath = $"{directoryPath}/achievements.json";
@@ -49,12 +50,12 @@ namespace ColorQuiz.SaveData
             else
             {
                 Debug.LogWarning("Achievements data file not found, initializing empty data.");
-                
+
             }
             IsFinishedLoadAchievementData = true;
         }
 
-        private async Task LoadSaveData()
+        private static async UniTask LoadSaveData()
         {
             string directoryPath = $"{absolutePathPrefix}/{jsonPath}";
             string filePath = $"{directoryPath}/saveData.json";
@@ -85,7 +86,7 @@ namespace ColorQuiz.SaveData
             IsFinishedLoadSaveData = true;
         }
 
-        private async Task LoadScoreData()
+        private static async UniTask LoadScoreData()
         {
             string directoryPath = $"{absolutePathPrefix}/{jsonPath}";
             string filePath = $"{directoryPath}/highScore.json";
@@ -102,7 +103,11 @@ namespace ColorQuiz.SaveData
                 {
                     string jsonContent = await File.ReadAllTextAsync(filePath);
                     HighScore saveData = JsonUtility.FromJson<HighScore>(jsonContent);
-                    FindObjectsOfType<StatsManager>()[0].SetHighScore(saveData);
+                    foreach (var go in SceneManager.GetActiveScene().GetRootGameObjects())
+                    {
+                        if (go.TryGetComponent<StatsManager>(out var statsManager))
+                            statsManager.SetHighScore(saveData);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -116,7 +121,7 @@ namespace ColorQuiz.SaveData
             IsFinishedLoadSaveData = true;
         }
 
-        public async Task SaveDataAsync(SaveData data, HighScore highScore)
+        public static async UniTask SaveDataAsync(SaveData data, HighScore highScore)
         {
             string directoryPath = $"{absolutePathPrefix}/{jsonPath}";
             string filePath = $"{directoryPath}/saveData.json";
@@ -124,13 +129,10 @@ namespace ColorQuiz.SaveData
 
             // ディレクトリが存在しない場合は作成
             if (!Directory.Exists(directoryPath))
-            {
                 Directory.CreateDirectory(directoryPath);
-            }
-
+            
             string jsonContent = JsonUtility.ToJson(data);
             string highScoreContent = JsonUtility.ToJson(highScore);
-
             try
             {
                 await File.WriteAllTextAsync(filePath, jsonContent);
@@ -144,8 +146,9 @@ namespace ColorQuiz.SaveData
             }
         }
 
-        public async void Awake()
+        public static async UniTask Invoke()
         {
+
             absolutePathPrefix = Application.persistentDataPath;
             try
             {

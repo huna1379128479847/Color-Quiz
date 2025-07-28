@@ -15,7 +15,7 @@ namespace ColorQuiz.Debugs
 
         async void OnclickEvent()
         {
-            await Director.instance.GetComponent<SaveDataLoader>().SaveDataAsync(new SaveData.SaveData(), new HighScore());
+            await SaveDataLoader.SaveDataAsync(new SaveData.SaveData(), new HighScore());
 #if UNITY_EDITOR
             EditorApplication.isPlaying = false; //ゲームプレイ終了
 #else

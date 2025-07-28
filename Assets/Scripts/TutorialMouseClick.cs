@@ -1,71 +1,59 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UniRx;
+using UniRx.Triggers;
+using Sirenix.OdinInspector;
+using HighElixir.Utilities;
 
 namespace ColorQuiz
 {
     public class TutorialMouseClick : MonoBehaviour
     {
-        private const float TUTORIAL_TIME = 12;
+        private static readonly float TUTORIAL_TIME = 12;
+
+
         [SerializeField] private Image _image;
+        [PropertyTooltip("パレットからずらす座標"), SerializeField] private Vector2 _positionOffset = new Vector2(0, 100);
+
         private float _dontControlTime;
-        private bool ShouldBeExpose() => _dontControlTime >= TUTORIAL_TIME;
-        private int _currentParetIdx = 0;
-        private Coroutine _imageCoroutine;
+        private bool _onTask = false;
+        private bool ShouldBeExpose => _dontControlTime >= TUTORIAL_TIME;
 
-        private void Update()
+        public async UniTask ImageToParetTransform()
         {
-            _dontControlTime += Time.deltaTime;
+            _onTask = true;
+            _image.gameObject.SetActive(true);
+            List<Transform> transforms = new List<Transform>(Director.instance.colorPallets.ConvertAll(p => p.transform));
+            LoopableInt idx = new(0, transforms.Count, 0);
 
-            if (ShouldBeExpose())
+            // 1秒ごとに次のパレットへ移動
+            while (ShouldBeExpose)
             {
-                _image.gameObject.SetActive(true);
-                if (_imageCoroutine == null) // コルーチンが開始されていない場合のみ実行
-                {
-                    _imageCoroutine = StartCoroutine(ImageToParetTransform());
-                }
+                _image.transform.position = transforms[idx.Value].position + (Vector3)_positionOffset;
+                idx.Value++;
+                await UniTask.Delay(1000); // 1秒待機
             }
-            else
-            {
-                _image.gameObject.SetActive(false);
-                if (_imageCoroutine != null) // コルーチンが動作している場合停止
-                {
-                    StopCoroutine(_imageCoroutine);
-                    _imageCoroutine = null;
-                }
-            }
-
-            if (Input.anyKey)
-            {
-                _dontControlTime = 0;
-            }
+            _image.gameObject.SetActive(false);
+            _onTask = false;
         }
 
-
-        public IEnumerator ImageToParetTransform()
+        private void Awake()
         {
-            List<Transform> transforms = new List<Transform>();
-            foreach (var iten in Director.instance.colorPallets)
-            {
-                transforms.Add(transform);
-            }
-            while (true)
-            {
-                if (!ShouldBeExpose())
-                {
-                    _image.gameObject.SetActive(false);
-                    yield break;
-                }
-                _image.transform.position = transforms[_currentParetIdx].position;
-                _currentParetIdx++;
-                if (_currentParetIdx >= Director.instance.colorPallets.Count)
-                {
-                    _currentParetIdx = 0;
-                }
-                yield return new WaitForSeconds(3);
-            }
+            _image.gameObject.SetActive(false);
+            InputSystem.onAnyButtonPress.Subscribe(_ => _dontControlTime = 0).AddTo(this);
+            this.FixedUpdateAsObservable()
+                .Where(_ => !ShouldBeExpose)
+                .Subscribe(_ => _dontControlTime = Mathf.Min(_dontControlTime + Time.fixedDeltaTime, TUTORIAL_TIME))
+                .AddTo(this);
+            this.UpdateAsObservable()
+                .Where(_ => ShouldBeExpose && !_onTask)
+                .Subscribe(unused => {
+                    _ = ImageToParetTransform();
+                })
+                .AddTo(this);
         }
-
     }
 }

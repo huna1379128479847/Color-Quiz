@@ -1,19 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerInput))]
 public class OpenUI : MonoBehaviour
 {
-    [SerializeField] private GameObject UI;
+    [SerializeField] private GameObject _ui;
 
     public void Open()
     {
-        UI.SetActive(true);
+        _ui.SetActive(true);
     }
 
-    public void Update()
+    // Input Systemのイベントを使用して、Escapeキーが押されたときにUIを閉じる
+    private void OnEscape()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && UI.activeSelf)
-        {
-            UI.SetActive(false);
-        }
+        if (_ui.activeSelf) _ui.SetActive(false);
     }
 }

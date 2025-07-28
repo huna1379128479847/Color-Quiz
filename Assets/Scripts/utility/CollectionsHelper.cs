@@ -25,7 +25,9 @@ namespace HighElixir.Utilities
         public static T RandomPick<T>(List<T> values, HashSet<T> exists)
         {
             if (values == null || values.Count == 0) return default;
-            List<T> v = values.Where(item => exists.Contains(item)).ToList();
+            List<T> v = values.Where(item => !exists.Contains(item)).ToList();
+            // もし未使用の要素がない場合は、デフォルト値を返す。
+            if (v.Count == 0) return default;
             return RandomPick(v);
         }
 
